@@ -83,6 +83,42 @@ public class MessageController {
 			model.addAttribute("msg", "이메일 전송중에 오류가 발생했습니다.");
 			model.addAttribute("url", "member/memberIdSearch");
 		}
+		else if(msgFlag.equals("memberPwdSearchOk")) {
+			model.addAttribute("msg", "메일에 임시 비밀번호가 발급되었습니다.");
+			model.addAttribute("url", "member/memberLogin");
+		}
+		else if(msgFlag.equals("memberPwdSearchNo1")) {
+			model.addAttribute("msg", "존재하지 않는 아이디입니다.");
+			model.addAttribute("url", "member/memberPwdSearch");
+		}
+		else if(msgFlag.equals("memberPwdSearchNo2")) {
+			model.addAttribute("msg", "아이디와 이메일이 불일치합니다.");
+			model.addAttribute("url", "member/memberPwdSearch");
+		}
+		else if(msgFlag.equals("memberPwdSearchNo3")) {
+			model.addAttribute("msg", "서버 처리중 오류가 발생했습니다. 다시 진행해주세요.");
+			model.addAttribute("url", "member/memberPwdSearch");
+		}
+		else if(msgFlag.equals("memberPwdSearchNo4")) {
+			model.addAttribute("msg", "메일 전송중 오류가 발생했습니다. 다시 진행해주세요.");
+			model.addAttribute("url", "member/memberPwdSearch");
+		}
+		else if(msgFlag.equals("memberPwdUpdateOk")) {
+			model.addAttribute("msg", "비밀번호가 수정되었습니다.");
+			model.addAttribute("url", "member/memberMain");
+		}
+		else if(msgFlag.equals("memberPwdUpdateNo")) {
+			model.addAttribute("msg", "기존 비밀번호가 불일치합니다.");
+			model.addAttribute("url", "member/memberUpdatePwd");
+		}
+		else if(msgFlag.equals("fileUploadOk")) {
+			model.addAttribute("msg", "파일이 업로드되었습니다.");
+			model.addAttribute("url", "study/fileUpload/fileUploadForm");
+		}
+		else if(msgFlag.equals("fileUploadNo")) {
+			model.addAttribute("msg", "파일 업로드 실패");
+			model.addAttribute("url", "study/fileUpload/fileUploadForm");
+		}
 		
 		return "include/message";
 	}

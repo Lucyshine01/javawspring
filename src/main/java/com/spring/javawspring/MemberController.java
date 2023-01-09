@@ -2,8 +2,7 @@ package com.spring.javawspring;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.javawspring.pagination.PageProcess;
@@ -152,8 +152,7 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value = "/memberJoin", method = RequestMethod.POST)
-	public String memberJoinPost(MemberVO vo) {
-		//System.out.println("memberVO : " + vo);
+	public String memberJoinPost(MultipartFile fName ,MemberVO vo) {
 		// 아이디 체크
 		if(memberService.getMemberIdCheck(vo.getMid()) != null) {
 			return "redirect:/msg/memberIdCheckNo";
@@ -166,8 +165,8 @@ public class MemberController {
 		// 비밀번호 암호화(BCryptPasswordEncoder)
 		vo.setPwd(passwordEncoder.encode(vo.getPwd()));
 		
-		// 체크가 완료되면 vo에 담긴 자료를 DB에 저장시켜준다.(회원 가입)
-		int res = memberService.setMemberJoinOk(vo);
+		// 체크가 완료되면 사진파일 업로드후, vo에 담긴 자료를 DB에 저장시켜준다.(회원 가입) - 서비스객체에서 수행처리했다.
+		int res = memberService.setMemberJoinOk(fName, vo);
 		
 		if(res == 1) return "redirect:/msg/memberJoinOk";
 		else return "redirect:/msg/memberJoinNo";
@@ -238,7 +237,7 @@ public class MemberController {
 	
 	
 	@RequestMapping(value = "/memberIdSearch", method = RequestMethod.GET)
-	public String memberIdSearchGet(Model model, PageVO pageVO) {
+	public String memberIdSearchGet() {
 		return "member/memberIdSearch";
 	}
 	
@@ -246,7 +245,6 @@ public class MemberController {
 	@RequestMapping(value = "/memberIdSearch", method = RequestMethod.POST)
 	public String memberIdSearchGet(MailVO vo, HttpServletRequest request) {
 		try {
-			System.out.println(vo.getToMail());
 			String toMail = vo.getToMail();
 			String title = "아이디 이메일 인증";
 			String content = "";
@@ -283,6 +281,79 @@ public class MemberController {
 		return "redirect:/msg/memberIdSearchOk";
 	}
 	
+	// 비밀번호 찾기를 위한 임시비밀번호 발급 폼...
+	@RequestMapping(value = "/memberPwdSearch", method = RequestMethod.GET)
+	public String memberPwdSearchGet() {
+		return "member/memberPwdSearch";
+	}
+	
+	// 비밀번호 찾기를 위한 임시비밀번호 발급 폼...
+	@RequestMapping(value = "/memberPwdSearch", method = RequestMethod.POST)
+	public String memberPwdSearchPost(String mid, MailVO mailVO) {
+		MemberVO vo = memberService.getMemberIdCheck(mid);
+		if(vo.getEmail() == null) return "redirect:/msg/memberPwdSearchNo1";
+		else if(!vo.getEmail().equals(mailVO.getToMail())) return "redirect:/msg/memberPwdSearchNo2";
+		
+		// 회원정보가 맞다면 임시비밀번호를 발급받는다.
+		UUID uid = UUID.randomUUID();
+		String pwd = uid.toString().substring(0,8);
+		
+		// 발급받은 임시비밀번호를 암호화처리시켜서 DB에 저장한다.
+		int res = memberService.setMemberPwdUpdate(mid,passwordEncoder.encode(pwd));
+		if(res != 1) return "redirect:/msg/memberPwdSearchNo3";
+		
+		// 임시비밀번호를 메일로 전송처리한다.(서비스객체에서 처리)
+		res = mailSend(mailVO.getToMail(), pwd);
+		
+		if(res == 1) return "redirect:/msg/memberPwdSearchOk";
+		else return "redirect:/msg/memberPwdSearchNo4";
+	}
+
+	private int mailSend(String toMail, String pwd) {
+		try {
+			String title = "임시 비밀번호 발급";
+			String content = "";
+			
+			// 메일을 전송하기위한 객체 : MimeMessage() - 메세지 전송 , MimeMessageHelper() - 메세지 저장소(보관함)
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+			
+			// 메일보관함에 회원이 보내온 메세지들을 모두 저장시킨다.
+			messageHelper.setTo(toMail);
+			messageHelper.setSubject(title);
+			messageHelper.setText(content);
+			
+			// 메세지 보관함의 내용(content)에 필요한 정보를 추가로 담아서 전송시킬수 있도록 한다.
+			
+			content = "<br>회원님의 임시비밀번호는 "+pwd+"입니다<br>빠른 시일내에 비밀번호 변경해주시길 바랍니다.<br>";
+			content += "<br><hr><h3>CJ Green</h3><hr><br>";
+			
+			messageHelper.setText(content, true);	// 앞에 내용에 이 내용을 추가한다.
+			
+			// 메일 전송하기
+			mailSender.send(message);
+			
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			return 0;
+		}
+		return 1;
+	}
+	
+	// 비밀번호 변경 폼...
+	@RequestMapping(value = "/memberUpdatePwd", method = RequestMethod.GET)
+	public String memberUpdatePwdGet() {
+		return "member/memberUpdatePwd";
+	}
+	
+	@RequestMapping(value = "/memberUpdatePwd", method = RequestMethod.POST)
+	public String memberUpdatePwdPost(String mid, String oldPwd, String newPwd) {
+		if(!passwordEncoder.matches(oldPwd, memberService.getMemberIdCheck(mid).getPwd())) {
+			return "redirect:/msg/memberPwdUpdateNo";
+		};
+		memberService.setMemberPwdUpdate(mid, passwordEncoder.encode(newPwd));
+		return "redirect:/msg/memberPwdUpdateOk";
+	}
 	
 	
 //	@RequestMapping(value = "/memberList", method = RequestMethod.GET)

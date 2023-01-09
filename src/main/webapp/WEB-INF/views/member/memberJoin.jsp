@@ -33,7 +33,7 @@
 				submitFlag = 1;
 			}
 			else {
-				let fileSize = document.getElementById("file").files[0].size;
+				let fileSize = document.getElementById("fName").files[0].size;
 				
 				if(fileSize > maxSize) {
 					alert("업로드 파일의 크기는 1Mbyte를 초과할수 없습니다.");
@@ -241,8 +241,8 @@
 <jsp:include page="/WEB-INF/views/include/slide2.jsp"></jsp:include>
 <p><br/></p>
 <div class="container">
-  <!-- <form name="myform" method="post" class="was-validated" enctype="multipart/form-data"> -->
-  <form name="myform" method="post" class="was-validated">
+  <form name="myform" method="post" class="was-validated" enctype="multipart/form-data">
+  <!-- <form name="myform" method="post" class="was-validated" > -->
     <h2>회 원 가 입</h2>
     <br/>
     <div class="form-group">

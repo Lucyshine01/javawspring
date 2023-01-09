@@ -1,12 +1,16 @@
 package com.spring.javawspring.service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.javawspring.common.JavawspringProvide;
 import com.spring.javawspring.dao.MemberDAO;
 import com.spring.javawspring.vo.MemberVO;
 
@@ -27,8 +31,28 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int setMemberJoinOk(MemberVO vo) {
-		return memberDAO.setMemberJoinOk(vo);
+	public int setMemberJoinOk(MultipartFile fName, MemberVO vo) {
+		// 업로드된 사진을 서버 파일시스템에 저장시켜준다.
+		int res = 0;
+		try {
+			String oFileName = fName.getOriginalFilename();
+			if(oFileName.equals("")) {
+				vo.setPhoto("noimage.jpg");
+			}
+			else {
+				UUID uid = UUID.randomUUID();
+				String saveFileName = uid + "_" + oFileName;
+				
+				JavawspringProvide ps = new JavawspringProvide();
+				ps.writeFile(fName, saveFileName, "member");
+				vo.setPhoto(saveFileName);
+			}
+			memberDAO.setMemberJoinOk(vo);
+			res = 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 	@Override
@@ -70,6 +94,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public String getIdSearch(String toMail) {
 		return memberDAO.getIdSearch(toMail);
+	}
+
+	@Override
+	public int setMemberPwdUpdate(String mid, String pwd) {
+		memberDAO.setMemberPwdUpdate(mid,pwd);
+		return 1;
 	}
 	
 }

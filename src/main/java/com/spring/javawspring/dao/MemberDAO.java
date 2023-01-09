@@ -23,5 +23,7 @@ public interface MemberDAO {
 	public ArrayList<MemberVO> getMemberList(@Param("stratIndexNo") int stratIndexNo, @Param("pageSize") int pageSize);
 
 	public String getIdSearch(@Param("toMail") String toMail);
+
+	public void setMemberPwdUpdate(@Param("mid") String mid, @Param("pwd") String pwd);
 	
 }
