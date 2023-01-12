@@ -45,17 +45,20 @@ create table boardReply2 (
 	boardIdx int not null,					 	/* 원본글의 고유번호(외래키로 지정) */
 	mid varchar(20) not null,					/* 댓글 올린이의 아이디 */
 	nickName varchar(20) not null,		/* 댓글 올린이의 닉네임 */
-	wDate datetime default now(),			/* 댓글 올린 날짜 */
+	wrDate datetime default now(),			/* 댓글 올린 날짜 */
 	hostIp varchar(50) not null,			/* 댓글 올린 PC의 Ip */
 	content text not null,						/* 댓글 내용 */
+	level int not null default 0,			/* 댓글레벨 - 첫번째댓글(부모댓글)의 레벨은 0번 */
+	levelOrder int not null default 0,/* 댓글의 순서 - 첫번째댓글(부모댓글)의 레벨은 0번 */
 	primary key(idx),
-	foreign key(boardIdx) references board(idx)
+	foreign key(boardIdx) references board2(idx)
 	/* 문자면 상관x(정수형 같은 필드일때 문제가 됌) */
 	/* on update cascade  부모키에 따라서 같이 업데이트 */
 	/*	on delete restrict 부모키를 삭제하려하는 것 제약 */
 );
 
 desc boardReply2;
+drop table boardReply2;
 
 
 

@@ -2,6 +2,7 @@ package com.spring.javawspring;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -19,6 +20,7 @@ import com.spring.javawspring.pagination.PageProcess;
 import com.spring.javawspring.pagination.PageVO;
 import com.spring.javawspring.service.BoardService;
 import com.spring.javawspring.service.MemberService;
+import com.spring.javawspring.vo.BoardReplyVO;
 import com.spring.javawspring.vo.BoardVO;
 import com.spring.javawspring.vo.MemberVO;
 
@@ -78,7 +80,8 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value = "/boardContent", method = RequestMethod.GET)
-	public String boardContentGet(int idx, Model model, PageVO pageVO, HttpSession session) {
+	public String boardContentGet(Model model, int idx, PageVO pageVO, HttpSession session,
+			@RequestParam(name = "replyPag", defaultValue = "", required = false) String replyPag) {
 		// 글 조회수 1회 증가시키기.(조회수 중복방지처리 - 세션 사용 : 'board+고유번호'를 객체배열에 추가시킨다.);
 		ArrayList<String> contentIdx = (ArrayList)session.getAttribute("sContentIdx");
 		if(contentIdx == null) contentIdx = new ArrayList<String>();
@@ -92,11 +95,41 @@ public class BoardController {
 		// 해당접속자 '좋아요' 체크
 		BoardVO vo = boardService.getBoardContent(idx);
 		MemberVO memberVO = memberService.getMemberIdCheck((String) session.getAttribute("sMid"));
-		if(vo.getGoodIdx().indexOf(memberVO.getIdx()+memberVO.getMid()+"/") != -1) model.addAttribute("goodSW","ON");
+		if(vo.getGoodIdx().indexOf("("+memberVO.getIdx()+")/") != -1) model.addAttribute("goodSW","ON");
 		else model.addAttribute("goodSW","OFF");
 		
 		// 이전글/ 다음글 가져오기
 		ArrayList<BoardVO> pnVos = boardService.getPrevNext(idx);
+		
+		int replyPageSize = 10;
+		int totRecCnt = boardService.totRecCnt(idx); 
+		int totPage = (totRecCnt % replyPageSize)==0 ? totRecCnt / replyPageSize : (totRecCnt / replyPageSize)+1;
+		
+		int pag = 0;
+		if(replyPag.equals("")) pag = totPage;
+		else pag = Integer.parseInt(replyPag);
+		
+		int stratIndexNo = (pag-1) * replyPageSize; 
+		int curScrStartNo = totRecCnt - stratIndexNo;
+		
+		int blockSize = 3;
+		int curBlock = (pag - 1) / blockSize; 
+		int lastBlock = (totPage-1) / blockSize;
+		
+		// 댓글 자겨오기(replyVos)
+		if(totRecCnt != 0) {
+			List<BoardReplyVO> replyVos = boardService.getBoardReply(idx,stratIndexNo,replyPageSize);
+			model.addAttribute("replyVos", replyVos);
+		}
+		
+		model.addAttribute("blockSize", blockSize);
+		model.addAttribute("curBlock", curBlock); 
+		model.addAttribute("lastBlock",lastBlock); 
+		model.addAttribute("replyPageSize", replyPageSize);
+		model.addAttribute("replyPag", pag);
+		model.addAttribute("totPage", totPage);
+		model.addAttribute("curScrStartNo", curScrStartNo);
+		
 		
 		model.addAttribute("vo",vo);
 		model.addAttribute("pag",pageVO.getPag());
@@ -113,7 +146,7 @@ public class BoardController {
 		boardVO = boardService.getBoardContent(boardVO.getIdx());
 		MemberVO memberVO = memberService.getMemberIdCheck((String)session.getAttribute("sMid"));
 		String goodStr = "";
-		String goodIdxMid = memberVO.getIdx()+memberVO.getMid()+"/";
+		String goodIdxMid = "("+memberVO.getIdx()+")/";
 		if(boardVO.getGoodIdx().indexOf(goodIdxMid) == -1) {
 			boardVO.setGoodIdx(boardVO.getGoodIdx()+goodIdxMid);
 			boardVO.setGood(boardVO.getGood() + 1);
@@ -198,6 +231,69 @@ public class BoardController {
 		return "redirect:/msg/boardUpdateOk";
 	}
 	
+	// 댓글 달기
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInput", method = RequestMethod.POST)
+	public String boardReplyInputPost(BoardReplyVO replyVo) {
+		//int level = 0;
+		int levelOrder = 0;
+		String strlevelOrder = boardService.getMaxLevelOrder(replyVo.getBoardIdx());
+		if(strlevelOrder != null) levelOrder = Integer.parseInt(strlevelOrder);
+		replyVo.setLevelOrder(levelOrder + 1);
+		
+		boardService.setBoardReplyInput(replyVo);
+		
+		return "1";
+	}
+	
+	// 대댓글(답글) 달기
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInput2", method = RequestMethod.POST)
+	public String boardReplyInput2Post(BoardReplyVO replyVo) {
+		//System.out.println("replyVo : " + replyVo);
+		
+		ArrayList<BoardReplyVO> afterVos = boardService.getAfterReplyList(replyVo);
+		
+		int levelOrder = 0;
+		if(afterVos.size() != 0) {
+			for(int i=0; i<afterVos.size(); i++) {
+				if(afterVos.get(i).getLevel() <= replyVo.getLevel()) {
+					levelOrder = afterVos.get(i).getLevelOrder();
+					break;
+				}	
+			}
+			if(levelOrder == 0) levelOrder = afterVos.get(afterVos.size()-1).getLevelOrder()+1;
+		}
+		else {
+			levelOrder = replyVo.getLevelOrder()+1;
+		}
+		
+		boardService.setLevelOrderPlusUpdate(replyVo.getBoardIdx(),levelOrder);
+		
+		replyVo.setLevel(replyVo.getLevel()+1);
+		replyVo.setLevelOrder(levelOrder);
+		boardService.setBoardReplyInput2(replyVo);
+		
+		return "";
+	}
+	
+	
+	// 댓글 삭제
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyDeleteOk", method = RequestMethod.POST)
+	public String boardReplyDeleteOkPost(BoardReplyVO replyVo) {
+		boardService.setboardReplyDeleteOk(replyVo.getIdx());
+		boardService.setLevelOrderMinusUpdate(replyVo.getBoardIdx(), replyVo.getLevelOrder());
+		return "";
+	}
+	
+	// 댓글 수정
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyUpdateOk", method = RequestMethod.POST)
+	public String boardReplyUpdateOkPost(BoardReplyVO replyVo) {
+		boardService.setBoardReplyUpdate(replyVo);
+		return "";
+	}
 	
 	
 }

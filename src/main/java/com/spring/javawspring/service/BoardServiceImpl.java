@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +16,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.spring.javawspring.dao.BoardDAO;
+import com.spring.javawspring.vo.BoardReplyVO;
 import com.spring.javawspring.vo.BoardVO;
 
 @Service
@@ -178,6 +180,55 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void setBoardUpdateOk(BoardVO vo) {
 		boardDAO.setBoardUpdateOk(vo);
+	}
+
+	@Override
+	public void setBoardReplyInput(BoardReplyVO replyVo) {
+		boardDAO.setBoardReplyInput(replyVo);
+	}
+
+	@Override
+	public List<BoardReplyVO> getBoardReply(int idx, int stratIndexNo, int replyPageSize) {
+		return boardDAO.getBoardReply(idx, stratIndexNo, replyPageSize);
+	}
+
+	@Override
+	public void setboardReplyDeleteOk(int idx) {
+		boardDAO.setboardReplyDeleteOk(idx);
+	}
+
+	@Override
+	public String getMaxLevelOrder(int boardIdx) {
+		return boardDAO.getMaxLevelOrder(boardIdx);
+	}
+
+	@Override
+	public void setLevelOrderPlusUpdate(int boardIdx, int levelOrder) {
+		boardDAO.setLevelOrderPlusUpdate(boardIdx,levelOrder);
+	}
+	@Override
+	public void setLevelOrderMinusUpdate(int boardIdx, int levelOrder) {
+		boardDAO.setLevelOrderMinusUpdate(boardIdx,levelOrder);
+	}
+	
+	@Override
+	public void setBoardReplyInput2(BoardReplyVO replyVo) {
+		boardDAO.setBoardReplyInput2(replyVo);
+	}
+
+	@Override
+	public ArrayList<BoardReplyVO> getAfterReplyList(BoardReplyVO replyVo) {
+		return boardDAO.getAfterReplyList(replyVo);
+	}
+
+	@Override
+	public int totRecCnt(int idx) {
+		return boardDAO.totRecCnt(idx);
+	}
+
+	@Override
+	public void setBoardReplyUpdate(BoardReplyVO replyVo) {
+		boardDAO.setBoardReplyUpdate(replyVo);
 	}
 	
 }

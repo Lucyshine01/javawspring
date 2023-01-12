@@ -1,7 +1,9 @@
 package com.spring.javawspring.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.spring.javawspring.vo.BoardReplyVO;
 import com.spring.javawspring.vo.BoardVO;
 
 public interface BoardService {
@@ -25,5 +27,26 @@ public interface BoardService {
 	public void imgCheckUpdate(String content);
 
 	public void setBoardUpdateOk(BoardVO vo);
+
+	public void setBoardReplyInput(BoardReplyVO replyVo);
+
+	public List<BoardReplyVO> getBoardReply(int idx, int stratIndexNo, int replyPageSize);
+
+	public void setboardReplyDeleteOk(int idx);
+
+	public String getMaxLevelOrder(int boardIdx);
+
+
+	public void setBoardReplyInput2(BoardReplyVO replyVo);
+
+	public ArrayList<BoardReplyVO> getAfterReplyList(BoardReplyVO replyVo);
+
+	public void setLevelOrderPlusUpdate(int boardIdx, int levelOrder);
+
+	public int totRecCnt(int idx);
+
+	public void setLevelOrderMinusUpdate(int boardIdx, int levelOrder);
+
+	public void setBoardReplyUpdate(BoardReplyVO replyVo);
 
 }

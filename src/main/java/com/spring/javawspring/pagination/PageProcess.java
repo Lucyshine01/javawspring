@@ -103,4 +103,8 @@ public class PageProcess {
 		
 		return PageDAO.getListSearch(tableName, vo.getStartIndexNo(), vo.getPageSize(), keyWord, searchWord);
 	}
+	
+	
+	
+	
 }
