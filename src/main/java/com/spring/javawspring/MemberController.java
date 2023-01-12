@@ -202,10 +202,7 @@ public class MemberController {
 		ArrayList<MemberVO> vos = new ArrayList<MemberVO>();
 		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"member2",mid);
 		ObjectMapper objectMapper = new ObjectMapper();
-		for(int i=0; i<listMap.size(); i++) {
-			System.out.println(listMap.get(i));
-			vos.add(objectMapper.convertValue(listMap.get(i), MemberVO.class));
-		}
+		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), MemberVO.class));
 		model.addAttribute("vos",vos);
 		
 		
@@ -353,6 +350,18 @@ public class MemberController {
 		};
 		memberService.setMemberPwdUpdate(mid, passwordEncoder.encode(newPwd));
 		return "redirect:/msg/memberPwdUpdateOk";
+	}
+	
+	// 회원 정보 수정 폼...
+	@RequestMapping(value = "/memberUpdate", method = RequestMethod.GET)
+	public String memberUpdateGet(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		String mid = (String)session.getAttribute("sMid");
+		MemberVO vo = memberService.getMemberIdCheck(mid);
+		
+		model.addAttribute("vo",vo);
+		
+		return "member/memberUpdate";
 	}
 	
 	

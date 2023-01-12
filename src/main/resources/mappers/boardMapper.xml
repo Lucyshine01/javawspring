@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javawspring.dao.BoardDAO">
+	
+	<select id="getBoardContent" resultType="com.spring.javawspring.vo.BoardVO">
+		select * from board2 where idx = #{idx};
+	</select>
+	
+	<!-- <![CDATA[idx > 10]]> -->
+	<!-- <![CDATA[idx < 10]]> -->
+	<select id="getPrevNext" resultType="com.spring.javawspring.vo.BoardVO">
+		select idx, title from board2 where idx in(
+		(select idx from board2 where <![CDATA[idx < #{idx}]]> order by idx desc limit 1),
+		(select idx from board2 where <![CDATA[idx > #{idx}]]> order by idx limit 1));
+	</select>
+	
+	<update id="setBoardReadNum">
+		update board2 set readNum = readNum + 1 where idx = #{idx};
+	</update>
+	<update id="setBoardGood">
+		update board2 set good = #{good}, goodIdx = #{goodIdx} where idx = #{idx};
+	</update>
+	<update id="setBoardUpdateOk">
+		update board2 set title=#{vo.title}, email=#{vo.email}, homePage=#{vo.homePage}, content=#{vo.content}, hostIp=#{vo.hostIp}, uwrDate=now() where idx = #{vo.idx};
+	</update>
+	
+	<insert id="setBoardInput">
+		insert into board2 values (default,#{vo.nickName},#{vo.title},#{vo.email},#{vo.homePage},#{vo.content},default,#{vo.hostIp},default,default,#{vo.mid},default,'');
+	</insert>
+	
+	<delete id="setBoardDeleteOk">
+		delete from board2 where idx = #{idx};
+	</delete>
+	
+</mapper>

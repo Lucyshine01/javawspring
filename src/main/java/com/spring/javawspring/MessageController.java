@@ -8,13 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.spring.javawspring.pagination.PageVO;
+
 @Controller
 public class MessageController {
 	
 	@RequestMapping(value = "/msg/{msgFlag}", method = RequestMethod.GET)
 	public String msgget(@PathVariable String msgFlag, Model model,
 			@RequestParam(value = "mid", defaultValue = "", required = false) String mid,
-			HttpServletRequest request) {
+			HttpServletRequest request, PageVO pageVO, 
+			@RequestParam(value="flag", defaultValue = "", required = false) String flag
+			) {
 		if(msgFlag.equals("memberLoginOk")) {
 			model.addAttribute("msg", mid + "님 로그인 되었습니다.");
 			model.addAttribute("url", "member/memberMain");
@@ -118,6 +122,26 @@ public class MessageController {
 		else if(msgFlag.equals("fileUploadNo")) {
 			model.addAttribute("msg", "파일 업로드 실패");
 			model.addAttribute("url", "study/fileUpload/fileUploadForm");
+		}
+		else if(msgFlag.equals("boardInputOk")) {
+			model.addAttribute("msg", "게시글이 등록 되었습니다.");
+			model.addAttribute("url", "board/boardList?pageSize="+pageVO.getPageSize());
+		}
+		else if(msgFlag.equals("boardInputNo")) {
+			model.addAttribute("msg", "게시글이 등록에 실패했습니다.");
+			model.addAttribute("url", "board/boardInput?pag="+pageVO.getPag()+"&pageSize="+pageVO.getPageSize());
+		}
+		else if(msgFlag.equals("boardDeleteOk")) {
+			model.addAttribute("msg", "게시글이 삭제되었습니다.");
+			model.addAttribute("url", "board/boardList"+flag);
+		}
+		else if(msgFlag.equals("boardDeleteNo")) {
+			model.addAttribute("msg", "허용되지 않는 접근입니다.");
+			model.addAttribute("url", "board/boardContent"+flag);
+		}
+		else if(msgFlag.equals("boardUpdateOk")) {
+			model.addAttribute("msg", "게시글이 수정되었습니다");
+			model.addAttribute("url", "board/boardContent"+flag);
 		}
 		
 		return "include/message";

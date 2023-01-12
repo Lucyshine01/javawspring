@@ -27,7 +27,7 @@ public class PageProcess {
 	public ArrayList<HashMap<String, Object>> paging(PageVO vo, Model model, String tableName, String searchWord) {
 		
 		if(vo.getPag() == 0) vo.setPag(1);
-		if(vo.getPageSize() == 0) vo.setPageSize(3);
+		if(vo.getPageSize() == 0) vo.setPageSize(5);
 		
 		vo.setTotRecCnt(PageDAO.totTermRecCnt(tableName, vo.getPart(), searchWord));
 		vo.setTotPage(vo.getTotRecCnt() % vo.getPageSize()==0 ? vo.getTotRecCnt() / vo.getPageSize() : (vo.getTotRecCnt() / vo.getPageSize())+1);
