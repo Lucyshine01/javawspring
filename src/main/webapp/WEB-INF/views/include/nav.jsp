@@ -20,7 +20,7 @@
 	        <a href="${ctp}/study/mail/mailForm" class="w3-bar-item w3-button">메일연습</a>
 	        <a href="${ctp}/study/fileUpload/fileUploadForm" class="w3-bar-item w3-button">파일업로드연습</a>
 	        <a href="${ctp}/study/uuid/uuidForm" class="w3-bar-item w3-button">UUID연습</a>
-	        <a href="#" class="w3-bar-item w3-button">인터넷달력</a>
+	        <a href="${ctp}/study/calendar" class="w3-bar-item w3-button">인터넷달력</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">
@@ -37,12 +37,13 @@
 	      <button class="w3-padding-large w3-button" title="More">${sNickName} <i class="fa fa-caret-down"></i></button>     
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
 	        <a href="${ctp}/member/memberMain" class="w3-bar-item w3-button">회원메인화면</a>
+	        <a href="${ctp}/schedule/schedule" class="w3-bar-item w3-button">일정관리</a>
 	        <a href="#" class="w3-bar-item w3-button">웹메세지</a>
 	        <c:if test="${sLevel < 4}"><a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a></c:if>
 	        <a href="${ctp}/member/memberUpdate" class="w3-bar-item w3-button">회원정보 수정</a>
 	        <a href="${ctp}/member/memberUpdatePwd" class="w3-bar-item w3-button">비밀번호 수정</a>
 	        <a href="#" class="w3-bar-item w3-button">회원탈퇴</a>
-	        <a href="${ctp}/admin/adminMain" class="w3-bar-item w3-button">관리자메뉴</a>
+	        <c:if test="${sLevel == 0}"><a href="${ctp}/admin/adminMain" class="w3-bar-item w3-button">관리자메뉴</a></c:if>
 	      </div>
 	    </div>
     </c:if>

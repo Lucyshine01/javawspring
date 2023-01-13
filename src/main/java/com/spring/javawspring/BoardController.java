@@ -42,13 +42,22 @@ public class BoardController {
 	PageProcess pageProcess;
 	
 	@RequestMapping(value = "/boardList", method = RequestMethod.GET)
-	public String boardListGet(Model model, PageVO pageVO) {
-		
+	public String boardListGet(Model model, PageVO pageVO,
+			@RequestParam(name = "search", defaultValue = "", required = false) String search,
+			@RequestParam(name = "searchString", defaultValue = "", required = false) String searchString
+		) {
+		System.out.println(search);
+		System.out.println(searchString);
 		ArrayList<BoardVO> vos = new ArrayList<BoardVO>();
 		ObjectMapper objectMapper = new ObjectMapper();
-		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"board2", "");
+		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO, model, "board2", search, searchString);
 		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), BoardVO.class));
 		model.addAttribute("vos",vos);
+		
+		if(!search.equals(search)) {
+			model.addAttribute("search",search);
+			model.addAttribute("searchString",searchString);
+		}
 		
 		return "board/boardList";
 	}

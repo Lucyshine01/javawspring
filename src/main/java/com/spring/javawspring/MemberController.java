@@ -200,7 +200,7 @@ public class MemberController {
 			@RequestParam(name = "mid", defaultValue = "", required = false) String mid) {
 		
 		ArrayList<MemberVO> vos = new ArrayList<MemberVO>();
-		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"member2",mid);
+		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"member2","mid",mid);
 		ObjectMapper objectMapper = new ObjectMapper();
 		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), MemberVO.class));
 		model.addAttribute("vos",vos);

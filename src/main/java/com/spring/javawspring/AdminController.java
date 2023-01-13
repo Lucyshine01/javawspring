@@ -57,7 +57,7 @@ public class AdminController {
 		
 		ArrayList<MemberVO> vos = new ArrayList<MemberVO>();
 		ObjectMapper objectMapper = new ObjectMapper();
-		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"member2", "");
+		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"member2", pageVO.getPart(),"");
 		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), MemberVO.class));
 		model.addAttribute("vos",vos);
 		

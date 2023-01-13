@@ -30,7 +30,7 @@ public class GuestController {
 	public String guestListGet(Model model,PageVO pageVO) {
 		
 		ArrayList<GuestVO> vos = new ArrayList<GuestVO>();
-		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"guest", "");
+		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO,model,"guest","","");
 		ObjectMapper objectMapper = new ObjectMapper();
 		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), GuestVO.class));
 		model.addAttribute("vos",vos);

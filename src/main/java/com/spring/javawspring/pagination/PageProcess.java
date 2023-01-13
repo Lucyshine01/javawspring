@@ -24,12 +24,12 @@ public class PageProcess {
 	
 	
 	// 매퍼 동적처리로 하나로 통일
-	public ArrayList<HashMap<String, Object>> paging(PageVO vo, Model model, String tableName, String searchWord) {
+	public ArrayList<HashMap<String, Object>> paging(PageVO vo, Model model, String tableName, String keyWord, String searchWord) {
 		
 		if(vo.getPag() == 0) vo.setPag(1);
 		if(vo.getPageSize() == 0) vo.setPageSize(5);
 		
-		vo.setTotRecCnt(PageDAO.totTermRecCnt(tableName, vo.getPart(), searchWord));
+		vo.setTotRecCnt(PageDAO.totTermRecCnt(tableName, keyWord, searchWord));
 		vo.setTotPage(vo.getTotRecCnt() % vo.getPageSize()==0 ? vo.getTotRecCnt() / vo.getPageSize() : (vo.getTotRecCnt() / vo.getPageSize())+1);
 		vo.setStartIndexNo((vo.getPag()-1) * vo.getPageSize());
 		vo.setCurScrStartNo(vo.getTotRecCnt() - vo.getStartIndexNo());
@@ -49,7 +49,7 @@ public class PageProcess {
 		model.addAttribute("curScrStartNo", vo.getCurScrStartNo());
 		
 		model.addAttribute("pageVO", vo);
-		return PageDAO.getTermList(tableName, vo.getStartIndexNo(), vo.getPageSize(), vo.getPart(), searchWord);
+		return PageDAO.getTermList(tableName, vo.getStartIndexNo(), vo.getPageSize(), keyWord, searchWord);
 	}
 	
 	

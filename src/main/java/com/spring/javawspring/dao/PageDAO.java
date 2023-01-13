@@ -25,5 +25,5 @@ public interface PageDAO {
 
 	public ArrayList<HashMap<String, Object>> getTermList(@Param("tableName") String tableName, @Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, 
 			@Param("keyWord") String keyWord, @Param("searchWord") String searchWord);
-
+	
 }
