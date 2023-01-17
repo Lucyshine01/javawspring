@@ -4,12 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,12 +29,14 @@ import com.spring.javawspring.pagination.PageProcess;
 import com.spring.javawspring.pagination.PageVO;
 import com.spring.javawspring.service.MemberService;
 import com.spring.javawspring.service.StudyService;
+import com.spring.javawspring.vo.BoardVO;
 import com.spring.javawspring.vo.GuestVO;
 import com.spring.javawspring.vo.MailVO;
 import com.spring.javawspring.vo.MemberVO;
+import com.spring.javawspring.vo.QrCodeVO;
 
 @Controller
-@RequestMapping("study")
+@RequestMapping("/study")
 public class StudyController {
 	
 	@Autowired
@@ -318,6 +319,55 @@ public class StudyController {
 	public String calendarGet() {
 		studyService.getCalendar();
 		return "study/calendar/calendar";
+	}
+	
+	// QR Code 작성 폼
+	@RequestMapping(value = "/qrCode", method = RequestMethod.GET)
+	public String qrCodeGet(HttpSession session, Model model) {
+		String mid = (String) session.getAttribute("sMid");
+		MemberVO vo = memberService.getMemberIdCheck(mid);
+		
+		model.addAttribute("vo",vo);
+		
+		return "study/qrCode/qrCode";
+	}
+	
+	// QR Code 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrCode", method = RequestMethod.POST)
+	public String qrCodePost(HttpServletRequest request, String mid, String moveFlag) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrCode/");
+		String qrCodeName = studyService.qrCreate(mid,moveFlag, realPath);
+		
+		return qrCodeName;
+	}
+	
+	
+	// QR Code 작성 폼
+	@RequestMapping(value = "/qrCodePractice", method = RequestMethod.GET)
+	public String qrCodePracticeGet(HttpSession session, Model model, PageVO pageVO, String searchWord) {
+		if(pageVO.getPart() == null) pageVO.setPart("qrCode");
+		if(searchWord == null) searchWord = "";
+		
+		ArrayList<QrCodeVO> vos = new ArrayList<QrCodeVO>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO, model, "qrCode", pageVO.getPart(), searchWord);
+		for(int i=0; i<listMap.size(); i++) vos.add(objectMapper.convertValue(listMap.get(i), QrCodeVO.class));
+		System.out.println(vos);
+		model.addAttribute("vos",vos);
+		
+		return "study/qrCode/qrCodePractice";
+	}
+	
+	// QR Code 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrCodePractice", method = RequestMethod.POST)
+	public String qrCodePracticePost(HttpSession session,HttpServletRequest request, String movie, String adult, String student) {
+		String mid = (String) session.getAttribute("sMid");
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrCode/practice/");
+		int res = studyService.qrCodePracticeCreate(mid,movie,adult,student,realPath);
+		
+		return res+"";
 	}
 	
 	

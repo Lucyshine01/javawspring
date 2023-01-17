@@ -23,5 +23,11 @@ public interface MemberService {
 	public String getIdSearch(String toMail);
 
 	public int setMemberPwdUpdate(String mid, String pwd);
+
+	public MemberVO getMemberNickNameEmailCheck(String nickName, String email);
+
+	public void setKakaoMemberInputOk(String mid, String pwd, String nickName, String email);
+
+	public void setMemberUserDelCheck(String mid);
 	
 }

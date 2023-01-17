@@ -38,6 +38,7 @@ public class PageProcess {
 		vo.setCurBlock((vo.getPag() - 1) / vo.getBlockSize());
 		vo.setLastBlock((vo.getTotPage()-1) / vo.getBlockSize());
 		
+		vo.setPart(keyWord);
 		
 		model.addAttribute("blockSize", vo.getBlockSize());
 		model.addAttribute("curBlock", vo.getCurBlock());
@@ -49,6 +50,8 @@ public class PageProcess {
 		model.addAttribute("curScrStartNo", vo.getCurScrStartNo());
 		
 		model.addAttribute("pageVO", vo);
+		model.addAttribute("searchWord",searchWord);
+		System.out.println(vo.getStartIndexNo()+"/"+vo.getPageSize());
 		return PageDAO.getTermList(tableName, vo.getStartIndexNo(), vo.getPageSize(), keyWord, searchWord);
 	}
 	

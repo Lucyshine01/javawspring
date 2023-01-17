@@ -1,11 +1,17 @@
 package com.spring.javawspring.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +20,16 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.spring.javawspring.common.SecurityUtil;
 import com.spring.javawspring.dao.StudyDAO;
 import com.spring.javawspring.vo.GuestVO;
+import com.spring.javawspring.vo.QrCodeVO;
 
 @Service
 public class StudyServiceImpl implements StudyService {
@@ -256,5 +270,89 @@ public class StudyServiceImpl implements StudyService {
 		request.setAttribute("preLastDay", preLastDay);				// 이전달의 마지막일자를 기억하고 있는 변수
 		request.setAttribute("nextStartWeek", nextStartWeek);	// 다음달의 1일에 해당하는 요일을 기억하고있는 변수
 	}
+
+	@Override
+	public String qrCreate(String mid, String moveFlag, String realPath) {
+		String qrCodeName = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSSS");
+		UUID uid = UUID.randomUUID();
+		String strUid = uid.toString().substring(0,2);
+		
+		qrCodeName = sdf.format(new Date()) + "_" + mid + "_" + moveFlag + "_" + strUid;
+		
+		try {
+			File file = new File(realPath);
+			if(!file.exists()) file.mkdirs();	// 폴더 생성
+			
+			// getBytes() : 바이너리형식(2진법)을 바이트형식으로 변형
+			String codeFlag = new String(moveFlag.getBytes("UTF-8"), "ISO-8859-1");
+			
+			// qr코드 만들기
+			int qrCodeColor = 0xFF000000;	// qr코드 전경색(글자색) 16진수 색코드 0xFF000000
+			int qrCodeBackColor = 0xFFFFFFFF; // qr코드 배경색 
+			
+			// QR코드 객체 생성
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			
+			//BitMatrix bitMatrix = qrCodeWriter.encode(moveFlag, BarcodeFormat.QR_CODE, qrCodeColor, qrCodeBackColor);
+			// qr코드에 담을 내용 지정
+			BitMatrix bitMatrix = qrCodeWriter.encode(codeFlag, BarcodeFormat.QR_CODE, 200, 200);
+			
+			// 색상 설정
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrCodeColor,qrCodeBackColor);
+			
+			// 내용과 설정을 가진 버퍼이미지 생성
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			// ImageIO(버퍼이미지, 이미지속성(jpg,png 등등), 파일(경로:파일명))
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrCodeName + ".png"));
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		
+		return qrCodeName;
+	}
+
+	@Override
+	public int qrCodePracticeCreate(String mid, String movie, String adult, String student, String realPath) {
+		String qrCodeName = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSSS");
+		qrCodeName = sdf.format(new Date()) + mid + adult + student;
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월 dd일");
+		String content = "영화정보 : " + movie + " - 예매일 : " + sdf2.format(new Date()) + " - 성인 : " + adult + ", 청소년 : " + student;
+		
+		try {
+			File file = new File(realPath);
+			if(!file.exists()) file.mkdirs();
+			
+			String qrContent = new String(content.getBytes("UTF-8"), "ISO-8859-1");
+			int qrCodeColor = 0xFF000000;
+			int qrCodeBackColor = 0xFFFFFFFF;
+			
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 200, 200);
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrCodeColor,qrCodeBackColor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrCodeName + ".png"));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		
+		content = "영화정보 : " + movie + " - 예매일 : " + sdf2.format(new Date());
+		
+		QrCodeVO vo = new QrCodeVO();
+		
+		vo.setQrCode(qrCodeName);
+		vo.setBigo(content);
+		return studyDAO.setQrCode(vo);
+	}
+
 	
 }

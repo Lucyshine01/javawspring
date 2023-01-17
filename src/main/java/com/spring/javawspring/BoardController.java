@@ -46,8 +46,7 @@ public class BoardController {
 			@RequestParam(name = "search", defaultValue = "", required = false) String search,
 			@RequestParam(name = "searchString", defaultValue = "", required = false) String searchString
 		) {
-		System.out.println(search);
-		System.out.println(searchString);
+		
 		ArrayList<BoardVO> vos = new ArrayList<BoardVO>();
 		ObjectMapper objectMapper = new ObjectMapper();
 		ArrayList<HashMap<String, Object>> listMap = pageProcess.paging(pageVO, model, "board2", search, searchString);

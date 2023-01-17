@@ -16,6 +16,9 @@
 	<select id="getIdSearch" resultType="string">
 		select mid from member2 where email = #{toMail};
 	</select>
+	<select id="getMemberNickNameEmailCheck" resultType="com.spring.javawspring.vo.MemberVO">
+		select * from member2 where nickName = #{nickName} and email = #{email};
+	</select>
 	
 	<update id="setMemTotalUpdate">
 		update member2 set lastDate = now(), todayCnt = #{todayCnt}, visitCnt=visitCnt+1, point=#{nowTodayPoint} where mid = #{mid};
@@ -23,9 +26,15 @@
 	<update id="setMemberPwdUpdate">
 		update member2 set pwd = #{pwd} where mid = #{mid};
 	</update>
+	<update id="setMemberUserDelCheck">
+		update member2 set userDel = 'NO' where mid = #{mid};
+	</update>
 	
 	<insert id="setMemberJoinOk">
 		insert into member2 values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.homePage},#{vo.job},#{vo.hobby},#{vo.photo},#{vo.content},#{vo.userInfor},default,default,default,default,default,default,default)
+	</insert>
+	<insert id="setKakaoMemberInputOk">
+		insert into member2 values (default,#{mid},#{pwd},#{nickName},'','',now(),'010--','/ / /',#{email},'http://','기타','기타',default,'',default,default,default,default,default,default,default,default)
 	</insert>
 	
 </mapper>

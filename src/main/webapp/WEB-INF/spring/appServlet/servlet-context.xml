@@ -58,6 +58,7 @@
 		<interceptor>
 			<mapping path="/study/**"/>
 			<mapping path="/board/**"/>
+			<mapping path="/pds/**"/>
 			<mapping path="/member/memberList"/>
 			<exclude-mapping path="/board/boardList"/>
 			<beans:ref bean="level3Interceptor" />
@@ -72,6 +73,7 @@
 			<exclude-mapping path="/member/memberNickNameCheck"/>
 			<exclude-mapping path="/member/memberIdSearch"/>
 			<exclude-mapping path="/member/memberPwdSearch"/>
+			<exclude-mapping path="/member/memberKakaoLogin"/>
 			<beans:ref bean="level4Interceptor" />
 		</interceptor>
 	

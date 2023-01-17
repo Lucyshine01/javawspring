@@ -20,4 +20,8 @@ public interface StudyService {
 
 	public void getCalendar();
 
+	public String qrCreate(String mid, String moveFlag, String realPath);
+
+	public int qrCodePracticeCreate(String mid, String movie, String adult, String student, String realPath);
+
 }

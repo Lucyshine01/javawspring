@@ -25,5 +25,11 @@ public interface MemberDAO {
 	public String getIdSearch(@Param("toMail") String toMail);
 
 	public void setMemberPwdUpdate(@Param("mid") String mid, @Param("pwd") String pwd);
+
+	public MemberVO getMemberNickNameEmailCheck(@Param("nickName") String nickName,@Param("email") String email);
+
+	public void setKakaoMemberInputOk(@Param("mid") String mid,@Param("pwd") String pwd,@Param("nickName") String nickName,@Param("email") String email);
+
+	public void setMemberUserDelCheck(@Param("mid") String mid);
 	
 }

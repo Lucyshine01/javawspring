@@ -8,5 +8,9 @@
 	<select id="getGuestNames" resultType="com.spring.javawspring.vo.GuestVO">
 		select * from guest where name like concat('%',#{name},'%');
 	</select>
-		
+	
+	<insert id="setQrCode">
+		insert into qrCode values(default,#{vo.qrCode},#{vo.bigo},default);
+	</insert>
+	
 </mapper>

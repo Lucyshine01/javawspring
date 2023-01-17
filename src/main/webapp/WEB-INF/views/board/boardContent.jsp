@@ -281,8 +281,9 @@
   </style>
 </head>
 <body>
-<jsp:include page="/WEB-INF/views/include/nav.jsp" />
-<jsp:include page="/WEB-INF/views/include/slide2.jsp" />
+<input type="hidden" id="onload_Loading" />
+<%-- <jsp:include page="/WEB-INF/views/include/nav.jsp" />
+<jsp:include page="/WEB-INF/views/include/slide2.jsp" /> --%>
 <p><br/></p>
 <div class="container">
   <h2>글 내 용 보 기</h2>
@@ -380,8 +381,8 @@
 	<input type="button" value="댓글보이기" id="replyViewBtn" class="btn btn-secondary" />
 	<input type="button" value="댓글가리기" id="replyHiddenBtn" class="btn btn-info" />
 </div>
-<div id="reply">
-	<table class="table table-hover text-center">
+<div id="reply" style="width: 90%; margin: 0 auto;">
+	<table class="text-center" style="width: 90%; margin: 0 auto;">
 		<tr>
 			<th>작성자</th>
 			<th>댓글내용</th>
@@ -391,10 +392,10 @@
 		</tr>
 		<c:forEach var="replyVo" items="${replyVos}">
 			<tr>
-				<td class="text-left">
+				<td class="text-left" style="width: 250px">
 					<c:if test="${replyVo.level <= 0}">${replyVo.nickName}</c:if>
 					<c:if test="${replyVo.level > 0}">
-						<c:forEach var="i" begin="0" end="${replyVo.level}" >&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
+						<c:forEach var="i" begin="0" end="${replyVo.level}" >&nbsp;&nbsp;</c:forEach>
 						└&nbsp;${replyVo.nickName}
 					</c:if>
 				</td>
@@ -478,6 +479,6 @@
 	</form>
 </div>
 <p><br/></p>
-<jsp:include page="/WEB-INF/views/include/footer.jsp" />
+<%-- <jsp:include page="/WEB-INF/views/include/footer.jsp" /> --%>
 </body>
 </html>
