@@ -4,13 +4,26 @@
 	<select id="getGuestMid" resultType="com.spring.javawspring.vo.GuestVO">
 		select * from guest where name = #{name};
 	</select>
-	
 	<select id="getGuestNames" resultType="com.spring.javawspring.vo.GuestVO">
 		select * from guest where name like concat('%',#{name},'%');
 	</select>
+	<select id="getKakaoAddressName" resultType="com.spring.javawspring.vo.KakaoAddressVO">
+		select * from kakaoAddress where address = #{address};
+	</select>
+	<select id="getAddressNameList" resultType="com.spring.javawspring.vo.KakaoAddressVO">
+		select * from kakaoAddress order by address;
+	</select>
+	
 	
 	<insert id="setQrCode">
 		insert into qrCode values(default,#{vo.qrCode},#{vo.bigo},default);
 	</insert>
+	<insert id="setKakaoAddressName">
+		insert into kakaoAddress values (#{vo.address}, #{vo.latitude}, #{vo.longitude});
+	</insert>
+	
+	<delete id="setKakaoDelete">
+		delete from kakaoAddress where address = #{address};
+	</delete>
 	
 </mapper>

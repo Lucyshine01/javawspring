@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <% pageContext.setAttribute("newLine", "\n"); %>
 <c:set var="ctp" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
@@ -299,7 +300,7 @@
   		<td>${vo.nickName}</td>
   		<th>작성 날짜</th>
   		<td width="400px">
-  			${fn:substring(vo.wrDate,0,16)}
+  			<fmt:formatDate value="${vo.wrDate}" pattern="yyyy년 MM월 dd일 HH:mm" />
   			<c:if test="${!empty vo.uwrDate}"> 
   				<font style="font-size: 0.9em; float: right;">
 	  				<c:if test="${vo.upDay_diff == 0}">(방금 전 수정)</c:if>

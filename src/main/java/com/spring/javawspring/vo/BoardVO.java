@@ -1,5 +1,7 @@
 package com.spring.javawspring.vo;
 
+import java.util.Date;
+
 import lombok.Data;
 
 @Data
@@ -10,12 +12,12 @@ public class BoardVO {
 	private String email;
 	private String homePage;
 	private String content;
-	private String wrDate;
+	private Date wrDate;
 	private String hostIp;
 	private int readNum;
 	private int good;
 	private String mid;
-	private String uwrDate;
+	private Date uwrDate;
 	private String goodIdx;
 	
 	//as 별칭 필드

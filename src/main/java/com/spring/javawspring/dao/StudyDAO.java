@@ -1,10 +1,12 @@
 package com.spring.javawspring.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
 import com.spring.javawspring.vo.GuestVO;
+import com.spring.javawspring.vo.KakaoAddressVO;
 import com.spring.javawspring.vo.QrCodeVO;
 
 public interface StudyDAO {
@@ -14,5 +16,13 @@ public interface StudyDAO {
 	public ArrayList<GuestVO> getGuestNames(@Param("name") String mid);
 
 	public int setQrCode(@Param("vo") QrCodeVO vo);
+
+	public KakaoAddressVO getKakaoAddressName(@Param("address") String address);
+
+	public void setKakaoAddressName(@Param("vo") KakaoAddressVO vo);
+
+	public List<KakaoAddressVO> getAddressNameList();
+
+	public void setKakaoDelete(@Param("address") String address);
 	
 }

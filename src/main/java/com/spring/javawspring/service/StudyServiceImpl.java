@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -29,6 +30,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.spring.javawspring.common.SecurityUtil;
 import com.spring.javawspring.dao.StudyDAO;
 import com.spring.javawspring.vo.GuestVO;
+import com.spring.javawspring.vo.KakaoAddressVO;
 import com.spring.javawspring.vo.QrCodeVO;
 
 @Service
@@ -352,6 +354,38 @@ public class StudyServiceImpl implements StudyService {
 		vo.setQrCode(qrCodeName);
 		vo.setBigo(content);
 		return studyDAO.setQrCode(vo);
+	}
+
+	@Override
+	public KakaoAddressVO getKakaoAddressName(String address) {
+		return studyDAO.getKakaoAddressName(address);
+	}
+
+	@Override
+	public void setKakaoAddressName(KakaoAddressVO vo) {
+		studyDAO.setKakaoAddressName(vo);
+	}
+
+	@Override
+	public List<KakaoAddressVO> getAddressNameList() {
+		return studyDAO.getAddressNameList();
+	}
+
+	@Override
+	public void setKakaoDelete(String address) {
+		studyDAO.setKakaoDelete(address);
+	}
+
+	@Override
+	public void setKakaoAddressNameList(List<String> arr) {
+		KakaoAddressVO vo = null;
+		for(int i=0; i<arr.size(); i++) {
+			vo = new KakaoAddressVO();
+			vo.setAddress(arr.get(i).split("/")[0]);
+			vo.setLatitude(Double.parseDouble(arr.get(i).split("/")[1]));
+			vo.setLongitude(Double.parseDouble(arr.get(i).split("/")[2]));
+			studyDAO.setKakaoAddressName(vo);
+		}
 	}
 
 	

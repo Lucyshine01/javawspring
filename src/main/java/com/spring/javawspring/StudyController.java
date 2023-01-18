@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +33,7 @@ import com.spring.javawspring.service.MemberService;
 import com.spring.javawspring.service.StudyService;
 import com.spring.javawspring.vo.BoardVO;
 import com.spring.javawspring.vo.GuestVO;
+import com.spring.javawspring.vo.KakaoAddressVO;
 import com.spring.javawspring.vo.MailVO;
 import com.spring.javawspring.vo.MemberVO;
 import com.spring.javawspring.vo.QrCodeVO;
@@ -370,5 +373,72 @@ public class StudyController {
 		return res+"";
 	}
 	
+	// 카카오맵 기본지도
+	@RequestMapping(value = "/kakao/kakaomap", method = RequestMethod.GET)
+	public String kakaomapGet() {
+		return "study/kakaomap/kakaomap";
+	}
+	
+	// 카카오맵 '마커표시/DB저장'
+	@RequestMapping(value = "/kakao/kakaomap/kakaoEx1", method = RequestMethod.GET)
+	public String kakaoEx1Get() {
+		return "study/kakaomap/kakaoEx1";
+	}
+	
+	//카카오맵 '마커표시/DB저장'
+	@ResponseBody
+	@RequestMapping(value = "/kakaomap/kakaoEx1", method = RequestMethod.POST)
+	public String kakaoEx1Post(KakaoAddressVO vo) {
+		KakaoAddressVO searchVo = studyService.getKakaoAddressName(vo.getAddress());
+		if(searchVo != null) return "0";
+		studyService.setKakaoAddressName(vo);
+		
+		return "1";
+	}
+	
+	//카카오맵 'DB저장된 지역의 검색/삭제'
+	@RequestMapping(value = "/kakao/kakaomap/kakaoEx2", method = RequestMethod.GET)
+	public String kakaoEx2Get(Model model,
+			@RequestParam(name = "address", defaultValue = "그린아트컴퓨터학원 청주캠퍼스", required = false) String address ) {
+		KakaoAddressVO vo = studyService.getKakaoAddressName(address);
+		List<KakaoAddressVO> vos = studyService.getAddressNameList();
+		
+		model.addAttribute("vo",vo);
+		model.addAttribute("vos",vos);
+		
+		return "study/kakaomap/kakaoEx2";
+	}
+	
+	//카카오맵 'DB 삭제'
+	@ResponseBody
+	@RequestMapping(value = "/kakaomap/kakaoDelete", method = RequestMethod.POST)
+	public String kakaoDeletePost(String address) {
+		studyService.setKakaoDelete(address);
+		return "";
+	}
+	
+	@RequestMapping(value = "/kakao/kakaomap/kakaoEx3", method = RequestMethod.GET)
+	public String kakaoEx3Get() {
+		return "study/kakaomap/kakaoEx3";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/kakao/kakaomap/kakaoEx3", method = RequestMethod.POST)
+	public String kakaoEx3Post(@RequestParam(value="arr[]") List<String> arr) {
+		studyService.setKakaoAddressNameList(arr);
+		return "";
+	}
+	
+	@RequestMapping(value = "/kakao/kakaomap/kakaoEx4", method = RequestMethod.GET)
+	public String kakaoEx4Get(Model model,
+			@RequestParam(name = "address", defaultValue = "그린아트컴퓨터학원 청주캠퍼스", required = false) String address ) {
+		KakaoAddressVO vo = studyService.getKakaoAddressName(address);
+		List<KakaoAddressVO> vos = studyService.getAddressNameList();
+		
+		model.addAttribute("vo",vo);
+		model.addAttribute("vos",vos);
+		
+		return "study/kakaomap/kakaoEx4";
+	}
 	
 }
