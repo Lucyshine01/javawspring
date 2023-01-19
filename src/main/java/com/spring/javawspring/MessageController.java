@@ -147,6 +147,14 @@ public class MessageController {
 			model.addAttribute("msg", "자료실에 파일이 업로드 되었습니다.");
 			model.addAttribute("url", "pds/pdsList");
 		}
+		else if(msgFlag.equals("wmInputNo")) {
+			model.addAttribute("msg", "해당 회원이 존재하지 않습니다.");
+			model.addAttribute("url", "webMessage/wmMessage?mSw=0");
+		}
+		else if(msgFlag.equals("wmInputOk")) {
+			model.addAttribute("msg", "메세지가 전송되었습니다");
+			model.addAttribute("url", "webMessage/wmMessage?mSw=1");
+		}
 		
 		return "include/message";
 	}

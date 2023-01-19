@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javawspring.dao.WebMessageServiceDAO">
+	<select id="getWmMessageOne" resultType="com.spring.javawspring.vo.WebMessageVO">
+		select * from webMessage where idx = #{idx};
+	</select>
+	
+	<!-- 
+		mSw 	=> 1:받은메세지, 2:새메세지, 3:보낸메세지, 4.수신확인, 5:휴지통, 6:메세지상세보기, 0:메세지작서 
+		mFlag => 11:받은메세지, 12:보낸메세지, 13:휴지통
+ 	-->
+	<select id="totRecCnt" resultType="int">
+		<if test="mSw == 1">	<!-- 받은메세지 -->
+			select count(*) from webMessage where receiveId = #{mid} and (receiveSw='n' or receiveSw='r');
+		</if>
+		<if test="mSw == 2">	<!-- 새메세지 -->
+			select count(*) from webMessage where receiveId = #{mid} and receiveSw='n';
+		</if>
+		<if test="mSw == 3">	<!-- 보낸메세지 -->
+			select count(*) from webMessage where sendId = #{mid} and sendSw='s';
+		</if>
+		<if test="mSw == 4">	<!-- 수신확인 -->
+			select count(*) from webMessage where sendId = #{mid} and receiveSw='n';
+		</if>
+		<if test="mSw == 5">	<!-- 휴지통 -->
+			select count(*) from webMessage where (receiveId=#{mid} and receiveSw='g') or (sendId=#{mid} and sendSw='g');
+		</if>
+	</select>
+	
+	<select id="getWmMessageList" resultType="com.spring.javawspring.vo.WebMessageVO">
+		<if test="mSw == 1">	<!-- 받은메세지 -->
+			select * from webMessage where receiveId = #{mid} and (receiveSw='n' or receiveSw='r') order by idx desc limit #{startIndexNo}, #{pageSize};
+		</if>
+		<if test="mSw == 2">	<!-- 새메세지 -->
+			select * from webMessage where receiveId = #{mid} and receiveSw='n' order by idx desc limit #{startIndexNo}, #{pageSize};
+		</if>
+		<if test="mSw == 3">	<!-- 보낸메세지 -->
+			select * from webMessage where sendId = #{mid} and sendSw='s' order by idx desc limit #{startIndexNo}, #{pageSize};
+		</if>
+		<if test="mSw == 4">	<!-- 수신확인 -->
+			select * from webMessage where sendId = #{mid} and receiveSw='n' order by idx desc limit #{startIndexNo}, #{pageSize};
+		</if>
+		<if test="mSw == 5">	<!-- 휴지통 -->
+			select * from webMessage where (receiveId=#{mid} and receiveSw='g') or (sendId=#{mid} and sendSw='g') order by idx desc limit #{startIndexNo}, #{pageSize};
+		</if>
+	</select>
+	
+	<update id="setWmUpdate">
+		update webMessage set receiveSw='r', receiveDate=now() where idx=#{idx} and receiveId=#{mid} and receiveSw='n';
+	</update>
+	<update id="wmDeleteCheck">
+		<if test="mFlag == 1">
+			update webMessage set receiveSw='g' where idx=#{idx};
+		</if>
+		<if test="mFlag == 3">
+			update webMessage set sendSw='g' where idx=#{idx};
+		</if>
+	</update>
+	<update id="wmDelete">
+		<if test="mFlag == 1">
+			update webMessage set receiveSw='x' where idx=#{idx};
+		</if>
+		<if test="mFlag == 3">
+			update webMessage set sendSw='x' where idx=#{idx};
+		</if>
+	</update>
+	
+	<insert id="setWmInputOk">
+		insert into webMessage values (default,#{vo.title},#{vo.content},#{vo.sendId},'s',default,#{vo.receiveId},'n',default);
+	</insert>
+	
+	
+</mapper>

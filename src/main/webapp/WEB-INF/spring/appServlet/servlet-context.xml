@@ -61,11 +61,14 @@
 			<mapping path="/pds/**"/>
 			<mapping path="/member/memberList"/>
 			<exclude-mapping path="/board/boardList"/>
+			<exclude-mapping path="/pds/pdsList"/>
 			<beans:ref bean="level3Interceptor" />
 		</interceptor>
 		<interceptor>
 			<mapping path="/member/**"/>
+			<mapping path="/webMessage/**"/>
 			<mapping path="/board/boardList"/>
+			<mapping path="/pds/pdsList"/>
 			<exclude-mapping path="/member/memberLogin"/>
 			<exclude-mapping path="/member/memberLogout"/>
 			<exclude-mapping path="/member/memberJoin"/>

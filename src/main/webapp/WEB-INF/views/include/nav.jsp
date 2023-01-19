@@ -39,7 +39,7 @@
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
 	        <a href="${ctp}/member/memberMain" class="w3-bar-item w3-button">회원메인화면</a>
 	        <a href="${ctp}/schedule/schedule" class="w3-bar-item w3-button">일정관리</a>
-	        <a href="#" class="w3-bar-item w3-button">웹메세지</a>
+	        <a href="${ctp}/webMessage/wmMessage" class="w3-bar-item w3-button">웹메세지</a>
 	        <c:if test="${sLevel < 4}"><a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a></c:if>
 	        <a href="${ctp}/member/memberUpdate" class="w3-bar-item w3-button">회원정보 수정</a>
 	        <a href="${ctp}/member/memberUpdatePwd" class="w3-bar-item w3-button">비밀번호 수정</a>

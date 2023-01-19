@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.spring.javawspring.dao.PageDAO;
+import com.spring.javawspring.dao.WebMessageServiceDAO;
 import com.spring.javawspring.vo.MemberVO;
 
 @Service
@@ -22,6 +23,8 @@ public class PageProcess {
 	@Autowired
 	PageDAO PageDAO;
 	
+	@Autowired
+	WebMessageServiceDAO webMessageServiceDAO;
 	
 	// 매퍼 동적처리로 하나로 통일
 	public ArrayList<HashMap<String, Object>> paging(PageVO vo, Model model, String tableName, String keyWord, String searchWord) {
@@ -107,7 +110,37 @@ public class PageProcess {
 		return PageDAO.getListSearch(tableName, vo.getStartIndexNo(), vo.getPageSize(), keyWord, searchWord);
 	}
 	
-	
+	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) {
+		PageVO pageVO = new PageVO();
+		
+		int totRecCnt = 0;
+		
+		if(section.equals("webMessage")) {
+			String mid = part;
+			int mSw = Integer.parseInt(searchString);
+			totRecCnt = webMessageServiceDAO.totRecCnt(mid, mSw);
+		}
+		
+		int totPage = (totRecCnt % pageSize)==0 ? totRecCnt / pageSize : (totRecCnt / pageSize) + 1;
+		int startIndexNo = (pag - 1) * pageSize;
+		int curScrStartNo = totRecCnt - startIndexNo;
+		
+		int blockSize = 3;
+		int curBlock = (pag - 1) / blockSize;
+		int lastBlock = (totPage - 1) / blockSize;
+		
+		pageVO.setPag(pag);
+		pageVO.setPageSize(pageSize);
+		pageVO.setTotRecCnt(totRecCnt);
+		pageVO.setTotPage(totPage);
+		pageVO.setStartIndexNo(startIndexNo);
+		pageVO.setCurScrStartNo(curScrStartNo);
+		pageVO.setBlockSize(blockSize);
+		pageVO.setCurBlock(curBlock);
+		pageVO.setLastBlock(lastBlock);
+		
+		return pageVO;
+	}
 	
 	
 }
