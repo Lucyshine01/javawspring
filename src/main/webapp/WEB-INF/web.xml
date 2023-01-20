@@ -23,6 +23,13 @@
 			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
+		
+		<!-- 404에러처리를 위해서 404에러떄는 예외오류를 발생시켜준다. -->
+		<init-param>
+			<param-name>throwExceptionIfNoHandlerFound</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		
 	</servlet>
 		
 	<servlet-mapping>
@@ -43,5 +50,27 @@
 		<filter-name>encoding</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- error페이지 처리를 위한 기본 설정 -->
+	<!-- <error-page>
+		<error-code>400</error-code>
+		<location>/errorPage/errorOk?code=400</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/errorPage/errorOk?code=403</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/errorPage/errorOk?code=404</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/errorPage/errorOk?code=405</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/errorPage/errorOk?code=500</location>
+	</error-page> -->
 	
 </web-app>

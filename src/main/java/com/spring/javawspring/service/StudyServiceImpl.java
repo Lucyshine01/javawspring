@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,7 @@ import com.spring.javawspring.dao.StudyDAO;
 import com.spring.javawspring.vo.GuestVO;
 import com.spring.javawspring.vo.KakaoAddressVO;
 import com.spring.javawspring.vo.QrCodeVO;
+import com.spring.javawspring.vo.TransactionVO;
 
 @Service
 public class StudyServiceImpl implements StudyService {
@@ -386,6 +388,27 @@ public class StudyServiceImpl implements StudyService {
 			vo.setLongitude(Double.parseDouble(arr.get(i).split("/")[2]));
 			studyDAO.setKakaoAddressName(vo);
 		}
+	}
+
+	@Override
+	public void setTransInput1(TransactionVO vo) {
+		studyDAO.setTransInput1(vo);
+	}
+
+	@Override
+	public void setTransInput2(TransactionVO vo) {
+		studyDAO.setTransInput2(vo);
+	}
+
+	@Override
+	public List<TransactionVO> setTransList() {
+		return studyDAO.setTransList();
+	}
+
+	@Transactional
+	@Override
+	public void setTransInput(TransactionVO vo) {
+		studyDAO.setTransInput(vo);
 	}
 
 	

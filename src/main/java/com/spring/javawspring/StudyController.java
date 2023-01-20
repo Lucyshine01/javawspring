@@ -17,6 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +38,7 @@ import com.spring.javawspring.vo.KakaoAddressVO;
 import com.spring.javawspring.vo.MailVO;
 import com.spring.javawspring.vo.MemberVO;
 import com.spring.javawspring.vo.QrCodeVO;
+import com.spring.javawspring.vo.TransactionVO;
 
 @Controller
 @RequestMapping("/study")
@@ -439,6 +441,38 @@ public class StudyController {
 		model.addAttribute("vos",vos);
 		
 		return "study/kakaomap/kakaoEx4";
+	}
+	
+	// 트랜잭션 연습폼 호출
+	@RequestMapping(value = "/transaction/transaction", method = RequestMethod.GET)
+	public String transactionGet() {
+		return "study/transaction/transaction";
+	}
+	
+	// 트랜잭션 입력 1번폼(개별처리)
+	@Transactional	// 여러개의 작업을 하나로 묶어서 실행(실패시 모든작업 롤백시킴)
+	@RequestMapping(value = "/transaction/input1", method = RequestMethod.POST)
+	public String transactioninput1Get(TransactionVO vo) {
+		studyService.setTransInput1(vo);		// user에 등록
+		studyService.setTransInput2(vo);		// user2에 등록
+		return "redirect:/study/transaction/transactionList";
+	}
+	
+	// 트랜잭션 입력 2번폼(일괄처리)
+	@RequestMapping(value = "/transaction/input2", method = RequestMethod.POST)
+	public String transactioninput2Get(TransactionVO vo) {
+		studyService.setTransInput(vo);			// user, user2에 등록
+		
+		return "redirect:/study/transaction/transactionList";
+	}
+	
+	// 트랜잭션 리스트
+	@RequestMapping(value = "/transaction/transactionList", method = RequestMethod.GET)
+	public String transactionListGet(Model model) {
+		List<TransactionVO> vos = studyService.setTransList();
+		model.addAttribute("vos",vos);
+		
+		return "study/transaction/transactionList";
 	}
 	
 }

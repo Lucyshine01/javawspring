@@ -13,7 +13,9 @@
 	<select id="getAddressNameList" resultType="com.spring.javawspring.vo.KakaoAddressVO">
 		select * from kakaoAddress order by address;
 	</select>
-	
+	<select id="setTransList" resultType="com.spring.javawspring.vo.TransactionVO" >
+		select u1.*,u2.nickName as nickName, u2.job as job from user u1, user2 u2 where u1.mid = u2.mid order by idx desc;
+	</select>
 	
 	<insert id="setQrCode">
 		insert into qrCode values(default,#{vo.qrCode},#{vo.bigo},default);
@@ -21,6 +23,18 @@
 	<insert id="setKakaoAddressName">
 		insert into kakaoAddress values (#{vo.address}, #{vo.latitude}, #{vo.longitude});
 	</insert>
+	
+	<insert id="setTransInput1">
+		insert into user values (default, #{vo.mid}, #{vo.name}, #{vo.age}, #{vo.address});
+	</insert>
+	<insert id="setTransInput2">
+		insert into user2 values (default, #{vo.mid}, #{vo.nickName}, #{vo.job});
+	</insert>
+	<insert id="setTransInput">
+		insert into user values (default, #{vo.mid}, #{vo.name}, #{vo.age}, #{vo.address});
+		insert into user2 values (default, #{vo.mid}, #{vo.nickName}, #{vo.job});
+	</insert>
+	
 	
 	<delete id="setKakaoDelete">
 		delete from kakaoAddress where address = #{address};

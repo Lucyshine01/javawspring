@@ -234,6 +234,15 @@
 		    <version>3.5.0</version>
 		</dependency>
 		
+		<!-- 트랜잭션처리를 위한 라이브러리(버전) -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-tx</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+		
+		
 		
 	</dependencies>
     <build>
